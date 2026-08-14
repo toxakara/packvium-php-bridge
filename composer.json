@@ -1,0 +1,14 @@
+{
+  "name": "packvium/native-bridge",
+  "description": "Optional FFI backend for Packvium with pure-PHP fallback",
+  "type": "library",
+  "license": "MIT",
+  "require": {"php": ">=7.4"},
+  "require-dev": {"packvium/packvium": "^0.1.0"},
+  "suggest": {
+    "ext-ffi": "Loads the Rust shared library",
+    "packvium/packvium": "Provides the pure-PHP 0.1.x fallback"
+  },
+  "autoload": {"psr-4": {"Packvium\\Native\\": "src/"}},
+  "scripts": {"test": "php tests/run.php"}
+}

@@ -1,0 +1,42 @@
+# packvium/native-bridge
+
+Optional native backend for [Packvium](https://packagist.org/packages/packvium/packvium).
+It uses a Rust shared library through PHP FFI when one is available, and otherwise uses
+the pure-PHP Packvium package.
+
+## Install
+
+```bash
+composer require packvium/native-bridge packvium/packvium
+```
+
+PHP 7.4 or later is required. Enable `ext-ffi` and provide a compatible shared library
+only when you want the native backend; neither is required for the PHP fallback.
+
+## Quick start
+
+```php
+<?php
+
+use Packvium\Native\NativePacker;
+
+$packer = new NativePacker('/opt/packvium/libpackvium_ffi.so');
+$result = $packer->pack($request);
+
+echo $packer->backend(), PHP_EOL; // "rust" or "php"
+echo $result['status'], PHP_EOL;
+```
+
+Pass the same request format used by `packvium/packvium`. If the extension, library or
+health check is unavailable, `NativePacker` selects the PHP backend instead of failing
+the packing request.
+
+## When to use it
+
+Use this package when your deployment already manages the shared library and you want
+the native engine. For a zero-configuration installation, use `packvium/packvium`
+directly.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
