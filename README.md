@@ -31,6 +31,23 @@ Pass the same request format used by `packvium/packvium`. If the extension, libr
 health check is unavailable, `NativePacker` selects the PHP backend instead of failing
 the packing request.
 
+## Examples
+
+Runnable, in [`examples/`](examples). Each one is a single file you can read top to bottom
+and execute without a project around it.
+
+| File | What it shows |
+| --- | --- |
+| [`basic.php`](examples/basic.php) | Pack through the bridge and report which backend answered. |
+
+```bash
+php examples/basic.php                            # pure PHP
+php examples/basic.php /path/to/libpackvium.so    # compiled engine
+```
+
+Running it both ways is the point: the same request must come back with the same answer
+whichever backend served it.
+
 ## When to use it
 
 Use this package when your deployment already manages the shared library and you want
