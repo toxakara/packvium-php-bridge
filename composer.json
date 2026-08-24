@@ -3,6 +3,12 @@
   "description": "Optional FFI backend for Packvium with pure-PHP fallback",
   "type": "library",
   "license": "MIT",
+  "keywords": ["3d-bin-packing", "cartonization", "container-loading", "packing", "ffi"],
+  "homepage": "https://github.com/toxakara/packvium-php-bridge",
+  "support": {
+    "issues": "https://github.com/toxakara/packvium-php-bridge/issues",
+    "source": "https://github.com/toxakara/packvium-php-bridge"
+  },
   "require": {"php": ">=7.4"},
   "require-dev": {"packvium/packvium": "^0.1.0"},
   "suggest": {
