@@ -10,12 +10,46 @@ permissions:
   contents: read
 
 jobs:
+  # This package requires PHP >= 7.4 and means it: the bridge's own code runs there. Its
+  # one dev dependency does not. `packvium/packvium` -- the pure-PHP engine the fallback
+  # path needs, and the only thing `composer test` can exercise without a built Rust
+  # library -- requires PHP >= 8.2, so on 7.4/8.0/8.1 `composer install` cannot resolve at
+  # all and each of those three jobs failed from 2026-08-14 onward.
+  #
+  # Deleting the old rows would drop the 7.4 claim from CI entirely. Instead they assert
+  # the part that is true and checkable there -- the manifest validates and every shipped
+  # source file parses on that PHP version -- and stop asserting the part the registry
+  # cannot yet satisfy.
+  #
+  # This is temporary. From 0.1.3 `packvium/packvium` ships both trees in one package and
+  # declares `php: >=7.4`, so once that version is on Packagist these rows can go back to
+  # a plain `composer install` + `composer test` like the others: delete the `include:`
+  # block and the two `if:` conditions. Not before -- until then Composer can only see
+  # v0.1.1 and v0.1.2, which require 8.2.
   test:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         php: ["7.4", "8.0", "8.1", "8.2", "8.3", "8.4", "8.5"]
+        # Every row sets the flag explicitly. Leaving it unset on the newer rows would not
+        # work: GitHub casts both `null` and `false` to 0 when comparing, so an absent flag
+        # reads as `false` and would have skipped install and tests on 8.2+ entirely.
+        include:
+          - php: "7.4"
+            engine-installable: false
+          - php: "8.0"
+            engine-installable: false
+          - php: "8.1"
+            engine-installable: false
+          - php: "8.2"
+            engine-installable: true
+          - php: "8.3"
+            engine-installable: true
+          - php: "8.4"
+            engine-installable: true
+          - php: "8.5"
+            engine-installable: true
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
@@ -24,8 +58,15 @@ jobs:
           coverage: none
           tools: composer:v2
       - run: composer validate --strict --no-check-lock
-      - run: composer install --no-interaction --prefer-dist --no-progress
-      - run: composer test
+      - name: Syntax-check every shipped file on this PHP version
+        if: matrix.engine-installable == false
+        run: find src tests -name '*.php' -print0 | xargs -0 -n1 -- php -l
+      - name: Install
+        if: matrix.engine-installable != false
+        run: composer install --no-interaction --prefer-dist --no-progress
+      - name: Test
+        if: matrix.engine-installable != false
+        run: composer test
 
   # Runs the same suite with ext-ffi loaded, so the native-library health check and the
   # unhealthy-library fallback path (both otherwise skipped) actually execute.
