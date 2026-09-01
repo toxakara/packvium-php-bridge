@@ -4,6 +4,9 @@ Optional native backend for [Packvium](https://packagist.org/packages/packvium/p
 It uses a Rust shared library through PHP FFI when one is available, and otherwise uses
 the pure-PHP Packvium package.
 
+Full documentation, the constraint reference and benchmarks live at
+[packvium.com](https://packvium.com).
+
 ## Install
 
 ```bash
@@ -30,6 +33,14 @@ echo $result['status'], PHP_EOL;
 Pass the same request format used by `packvium/packvium`. If the extension, library or
 health check is unavailable, `NativePacker` selects the PHP backend instead of failing
 the packing request.
+
+Omit the library path (or pass `null`) to always use the pure-PHP backend — useful in a
+test suite or on a host that never provisions the shared library:
+
+```php
+$packer = new NativePacker();   // no library path: pure PHP, deterministic either way
+echo $packer->backend(), PHP_EOL; // "php"
+```
 
 ## Examples
 
@@ -67,7 +78,7 @@ Documentation, the constraint reference and the benchmarks are at
 | --- | --- | --- |
 | Python — [`packvium`](https://pypi.org/project/packvium/) | `pip install packvium` | [packvium-python](https://github.com/toxakara/packvium-python) |
 | PHP — [`packvium/packvium`](https://packagist.org/packages/packvium/packvium) | `composer require packvium/packvium` | [packvium-php](https://github.com/toxakara/packvium-php) |
-| Rust — [`packvium`](https://crates.io/crates/packvium) | `packvium = "0.1"` | [packvium-rust](https://github.com/toxakara/packvium-rust) |
+| Rust — [`packvium`](https://crates.io/crates/packvium) | `packvium = "1.0"` | [packvium-rust](https://github.com/toxakara/packvium-rust) |
 | Node.js — [`@packvium/engine`](https://www.npmjs.com/package/@packvium/engine) | `npm install @packvium/engine` | [packvium-node](https://github.com/toxakara/packvium-node) |
 | Browser / WebAssembly — [`@packvium/browser`](https://www.npmjs.com/package/@packvium/browser) | `npm install @packvium/browser` | [packvium-wasm](https://github.com/toxakara/packvium-wasm) |
 | PHP FFI bridge — [`packvium/native-bridge`](https://packagist.org/packages/packvium/native-bridge) | `composer require packvium/native-bridge` | [packvium-php-bridge](https://github.com/toxakara/packvium-php-bridge) |
