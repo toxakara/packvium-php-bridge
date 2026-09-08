@@ -50,6 +50,7 @@ and execute without a project around it.
 | File | What it shows |
 | --- | --- |
 | [`basic.php`](examples/basic.php) | Pack through the bridge and report which backend answered. |
+| [`shapes.php`](examples/shapes.php) | Items that are not their box: complementary wedges sharing one crate as `convex_hull`, and a cushion that compresses under load until the crush limit refuses it — the same numbers whichever backend loaded. |
 
 ```bash
 php examples/basic.php                            # pure PHP
