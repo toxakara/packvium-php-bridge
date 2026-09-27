@@ -4,6 +4,13 @@ What changed in `packvium/native-bridge` on Packagist, release by release. The f
 [Keep a Changelog](https://keepachangelog.com/1.1.0/) and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0]
+
+A version-alignment release. The bridge itself is unchanged; nothing breaks 1.3.0.
+
+Upgrade `packvium/packvium` to `1.4.0` to get fixed placements and `Packvium\Revisions`
+through the fallback.
+
 ## [1.3.0]
 
 A version-alignment release. The bridge itself is unchanged; nothing breaks 1.2.0.
