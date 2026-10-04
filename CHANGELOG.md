@@ -4,6 +4,18 @@ What changed in `packvium/native-bridge` on Packagist, release by release. The f
 [Keep a Changelog](https://keepachangelog.com/1.1.0/) and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0]
+
+A refused request now reads the same on both backends (see *Fixed*).
+
+### Fixed
+
+- **`quality` with a minimum support ratio answers on the Rust backend.** It failed with
+  `solution_failed_validation` where the PHP backend answered.
+- **A refused request reads the same on both backends.** On the Rust backend `NativePacker::pack()`
+  returned `['status' => 'error', 'error' => ...]` with no code; it now throws
+  `InvalidRequestException` with the code, reason and field, as the PHP backend does.
+
 ## [1.4.0]
 
 A version-alignment release. The bridge itself is unchanged; nothing breaks 1.3.0.

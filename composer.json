@@ -1,6 +1,6 @@
 {
   "name": "packvium/native-bridge",
-  "description": "Optional FFI backend for Packvium with pure-PHP fallback",
+  "description": "Packvium backend bridge: the Rust engine over FFI when available, pure PHP otherwise.",
   "type": "library",
   "license": "MIT",
   "authors": [
@@ -9,9 +9,10 @@
       "homepage": "https://packvium.com"
     }
   ],
-  "keywords": ["3d-bin-packing", "cartonization", "container-loading", "packing", "ffi"],
+  "keywords": ["3d-bin-packing", "bin-packing", "3d-packing", "cartonization", "container-loading", "pallet-packing", "truck-loading", "packing-algorithm", "logistics", "deterministic", "ffi"],
   "homepage": "https://packvium.com",
   "support": {
+    "docs": "https://packvium.com/docs",
     "issues": "https://github.com/toxakara/packvium-php-bridge/issues",
     "source": "https://github.com/toxakara/packvium-php-bridge"
   },

@@ -39,7 +39,25 @@ final class NativePacker {
                 if(!is_array($decoded)){
                     throw new \RuntimeException('Native backend returned a non-object response');
                 }
+                if(($decoded['status']??null)==='error'){
+                    $code=(string)($decoded['code']??'invalid_request');
+                    $reason=(string)($decoded['reason']??'invalid_value');
+                    $field=(string)($decoded['field']??'');
+                    $detail=(string)($decoded['detail']??($decoded['error']??'invalid request'));
+                    if($code==='invalid_fixed_placement'&&class_exists(\Packvium\Validation\FixedPlacementException::class)){
+                        throw new \Packvium\Validation\FixedPlacementException($detail,$reason,$field!==''?$field:'/fixed_placements');
+                    }
+                    if(class_exists(\Packvium\Serialization\InvalidRequestException::class)){
+                        throw new \Packvium\Serialization\InvalidRequestException($reason,$field,$detail);
+                    }
+                    throw new \RuntimeException((string)($decoded['error']??'Native backend error'));
+                }
                 return $decoded;
+            }catch(\Packvium\Serialization\InvalidRequestException $refusal){
+                // A refused request is a domain-level rejection, not a bridge
+                // or FFI transport failure. Throw it directly so the native backend
+                // reports invalid requests identically to pure PHP without disabling FFI.
+                throw $refusal;
             }catch(\Throwable $error){
                 // A library can become unusable after its constructor health check
                 // (bad return pointer, invalid JSON, runtime symbol failure). Disable
@@ -52,7 +70,7 @@ final class NativePacker {
 
         if(!class_exists(\Packvium\Packer::class)){
             throw new \RuntimeException(
-                'Install packvium/packvium 0.1.0 or provide a healthy Rust library path',
+                'Install packvium/packvium or provide a healthy Rust library path',
                 0,
                 $nativeFailure,
             );
