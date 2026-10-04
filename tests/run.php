@@ -53,6 +53,34 @@ if (!extension_loaded('ffi')) {
         throw new RuntimeException('Native pack() result has no string status field');
     }
     echo "OK native bridge FFI call against $library (status: {$result['status']})\n";
+
+    // /: verify that a refused request throws InvalidRequestException
+    // with matching code, reason, and field on both backends, and that refusal does
+    // not disable the native FFI backend.
+    $invalidRequest = [
+        'items' => [['id' => 'a', 'quantity' => 1, 'dimensions' => ['length' => '-10', 'width' => '10', 'height' => '10']]],
+        'containers' => [['id' => 'c', 'inner_dimensions' => ['length' => '20', 'width' => '20', 'height' => '20']]],
+    ];
+    try {
+        $packer->pack($invalidRequest);
+        throw new RuntimeException('PHP backend should have refused invalid request');
+    } catch (\Packvium\Serialization\InvalidRequestException $e) {
+        if ($e->errorCode() !== 'invalid_request' || $e->reason() !== 'negative_measure' || $e->field() !== '/items/0/dimensions/length') {
+            throw new RuntimeException("Unexpected refusal on PHP backend: {$e->errorCode()} {$e->reason()} {$e->field()}");
+        }
+    }
+    try {
+        $native->pack($invalidRequest);
+        throw new RuntimeException('Native backend should have refused invalid request');
+    } catch (\Packvium\Serialization\InvalidRequestException $e) {
+        if ($e->errorCode() !== 'invalid_request' || $e->reason() !== 'negative_measure' || $e->field() !== '/items/0/dimensions/length') {
+            throw new RuntimeException("Unexpected refusal on Native backend: {$e->errorCode()} {$e->reason()} {$e->field()}");
+        }
+    }
+    if ($native->backend() !== 'rust') {
+        throw new RuntimeException('Native backend should not be disabled by an application refusal');
+    }
+    echo "OK native bridge request refusal parity across both backends\n";
 }
 
 // "selects native only when healthy and always falls back safely" is only
