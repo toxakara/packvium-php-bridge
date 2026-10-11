@@ -4,6 +4,17 @@ What changed in `packvium/native-bridge` on Packagist, release by release. The f
 [Keep a Changelog](https://keepachangelog.com/1.1.0/) and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0]
+
+The Rust backend gains the 1.6.0 request fields — boxes cut to measure, flat bags, stacking
+groups and `maximum_volume` — through `packvium/packvium` 1.6.0.
+
+### Fixed
+
+- **Small orders with a `convex_hull` item no longer run out the clock on the Rust backend.**
+  A five-item order with one jar spent the whole time limit; it now finishes in a handful of
+  search nodes.
+
 ## [1.5.0]
 
 A refused request now reads the same on both backends (see *Fixed*).

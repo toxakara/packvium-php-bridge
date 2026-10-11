@@ -157,7 +157,7 @@ CodeMeta form.
 @software{packvium_php_bridge,
   author  = {{Packvium contributors}},
   title   = {Packvium native bridge for PHP},
-  version = {1.5.0},
+  version = {1.6.0},
   license = {MIT},
   url     = {https://packvium.com}
 }
