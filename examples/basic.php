@@ -39,6 +39,8 @@ $packer = new NativePacker($argv[1] ?? null);
 printf("bridge using the %s backend\n\n", $packer->backend());
 
 $request = [
+    // A fuse far above what this solve needs, so the answer never depends on machine load.
+    'configuration' => ['time_limit_ms' => 60000],
     'items' => [
         // Lengths and weights are strings on purpose. They are parsed into exact
         // integers, so '0.1' means a tenth of a millimetre and never
