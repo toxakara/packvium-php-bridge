@@ -81,7 +81,83 @@ if (!extension_loaded('ffi')) {
         throw new RuntimeException('Native backend should not be disabled by an application refusal');
     }
     echo "OK native bridge request refusal parity across both backends\n";
+
+    // Every refusal the core can name reaches the caller as the class pure PHP
+    // throws for the same request, with the same code, reason, field and detail.
+    $side = ['length' => '100', 'width' => '100', 'height' => '100'];
+    $fixed = ['item_type' => 'cube', 'container_type' => 'box', 'container_instance' => 1,
+        'position' => ['x' => '0', 'y' => '0', 'z' => '0'], 'orientation' => 'LWH'];
+    $refused = [
+        'fixed placement collision' => [
+            'items' => [['id' => 'cube', 'quantity' => 2, 'dimensions' => $side]],
+            'containers' => [['id' => 'box', 'inner_dimensions' => ['length' => '200', 'width' => '100', 'height' => '100']]],
+            'fixed_placements' => [$fixed, $fixed],
+        ],
+        'unsupported feature' => [
+            'items' => [['id' => 'cube', 'quantity' => 1, 'dimensions' => $side]],
+            'containers' => [['id' => 'box', 'inner_dimensions' => $side, 'pallet_overhang_limit' => '1']],
+        ],
+        'policy without as_of' => [
+            'items' => [['id' => 'cube', 'quantity' => 1, 'dimensions' => $side]],
+            'containers' => [['id' => 'box', 'inner_dimensions' => $side]],
+            'policy' => ['rules' => [['kind' => 'nope']]],
+        ],
+    ];
+    $describe = static function (callable $pack): array {
+        try {
+            $pack();
+        } catch (\Throwable $e) {
+            return [get_class($e), method_exists($e, 'errorCode') ? $e->errorCode() : null,
+                method_exists($e, 'reason') ? $e->reason() : null,
+                method_exists($e, 'field') ? $e->field() : null,
+                method_exists($e, 'detail') ? $e->detail() : null];
+        }
+        return ['accepted'];
+    };
+    foreach ($refused as $name => $case) {
+        $expected = $describe(static function () use ($packer, $case) { return $packer->pack($case); });
+        $observed = $describe(static function () use ($native, $case) { return $native->pack($case); });
+        if ($expected === ['accepted'] || $observed !== $expected) {
+            throw new RuntimeException("$name: native threw " . json_encode($observed) . ', pure PHP ' . json_encode($expected));
+        }
+    }
+    if ($native->backend() !== 'rust') {
+        throw new RuntimeException('A named refusal must not disable the native backend');
+    }
+    echo "OK native bridge raises pure PHP's class for every named refusal\n";
 }
+
+// A payload without a code this bridge can reproduce is the library's failure --
+// a caught panic, a transport error -- and must be answered from pure PHP, never thrown at
+// the caller as their mistake. Checked on the payloads directly: no library fails on demand.
+$unnamed = [
+    ['status' => 'error', 'error' => 'internal panic while solving (caught at the FFI boundary)'],
+    ['status' => 'error', 'error' => 'null request'],
+    ['status' => 'error', 'error' => 'solver result failed independent validation: x', 'code' => 'solution_failed_validation'],
+    ['status' => 'error', 'error' => 'invalid_request: x', 'code' => 'invalid_request'],
+];
+foreach ($unnamed as $payload) {
+    if (Packvium\Native\NativePacker::refusalFor($payload) !== null) {
+        throw new RuntimeException('Treated as the caller\'s refusal: ' . json_encode($payload));
+    }
+}
+$named = [
+    'Packvium\Serialization\InvalidRequestException' => ['code' => 'invalid_request', 'error' => 'invalid_request: /a: b', 'reason' => 'wrong_type', 'field' => '/a', 'detail' => 'b'],
+    'Packvium\Validation\FixedPlacementException' => ['code' => 'invalid_fixed_placement', 'error' => 'invalid_fixed_placement: d', 'reason' => 'cannot_hold', 'field' => '/fixed_placements', 'detail' => 'd'],
+    'Packvium\Serialization\UnsupportedFeatureException' => ['code' => 'unsupported_feature', 'error' => 'unsupported_feature: the Rust core does not yet implement x; ...'],
+];
+foreach ($named as $class => $payload) {
+    $refusal = Packvium\Native\NativePacker::refusalFor($payload + ['status' => 'error']);
+    if (!$refusal instanceof $class || $refusal->getMessage() !== $payload['error']) {
+        throw new RuntimeException("{$payload['code']} did not become $class with the core's message");
+    }
+}
+$model = Packvium\Native\NativePacker::refusalFor(['status' => 'error', 'code' => 'invalid_input', 'error' => 'invalid input: policy must be an object']);
+if (!$model instanceof Packvium\Serialization\InvalidRequestException || $model->reason() !== 'invalid_value'
+    || $model->field() !== '' || $model->detail() !== 'policy must be an object') {
+    throw new RuntimeException('An untyped model error must read as pure PHP\'s invalid_value refusal');
+}
+echo "OK native bridge maps each code to pure PHP's class and falls back on an unnamed failure\n";
 
 // "selects native only when healthy and always falls back safely" is only
 // proven if an unhealthy library -- one that doesn't exist, or that exists but doesn't

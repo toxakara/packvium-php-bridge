@@ -36,7 +36,9 @@ use Packvium\Native\NativePacker;
 $packer = new NativePacker($argv[1] ?? null);
 printf("answered by the %s backend\n\n", $packer->backend());
 
-const MM = ['units' => ['length' => 'mm']];
+// The time limit is a fuse far above what these solves need, so the answers never depend
+// on machine load.
+const MM = ['units' => ['length' => 'mm'], 'configuration' => ['time_limit_ms' => 60000]];
 
 function crate(string $length, string $width, string $height): array
 {

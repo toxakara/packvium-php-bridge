@@ -4,6 +4,20 @@ What changed in `packvium/native-bridge` on Packagist, release by release. The f
 [Keep a Changelog](https://keepachangelog.com/1.1.0/) and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0]
+
+The Rust backend runs the 1.7.0 core, through `packvium/packvium` 1.7.0: `quality` looks ahead
+in its block solver and, on our benchmark, finishes inside its time limit; every schema enum
+value outside its list, `ticks` as an output unit included, is refused as `not_allowed`.
+
+### Fixed
+
+- **A Rust-backend refusal throws the PHP backend's exception.** `NativePacker` maps each native
+  code onto the class the PHP backend throws, where it threw `invalid_request` for every native
+  error.
+- **A native failure falls back to the PHP backend.** A missing or unmapped code, or a caught
+  panic, was reported as the caller's fault; the PHP backend now answers the request.
+
 ## [1.6.0]
 
 The Rust backend gains the 1.6.0 request fields — boxes cut to measure, flat bags, stacking
