@@ -3,7 +3,7 @@
   "@type": "SoftwareSourceCode",
   "name": "Packvium native bridge for PHP",
   "description": "Packvium backend bridge: the Rust engine over FFI when available, pure PHP otherwise.",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "license": "https://spdx.org/licenses/MIT",
   "author": [
     {
@@ -27,6 +27,8 @@
     "packing-algorithm",
     "logistics",
     "deterministic",
+    "box-packing",
+    "load-planning",
     "ffi"
   ]
 }
