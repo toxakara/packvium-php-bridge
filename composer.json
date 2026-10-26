@@ -9,7 +9,7 @@
       "homepage": "https://packvium.com"
     }
   ],
-  "keywords": ["3d-bin-packing", "bin-packing", "3d-packing", "cartonization", "container-loading", "pallet-packing", "truck-loading", "packing-algorithm", "logistics", "deterministic", "ffi"],
+  "keywords": ["3d-bin-packing", "bin-packing", "3d-packing", "cartonization", "container-loading", "pallet-packing", "truck-loading", "packing-algorithm", "logistics", "deterministic", "box-packing", "load-planning", "ffi"],
   "homepage": "https://packvium.com",
   "support": {
     "docs": "https://packvium.com/docs",

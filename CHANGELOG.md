@@ -4,6 +4,13 @@ What changed in `packvium/native-bridge` on Packagist, release by release. The f
 [Keep a Changelog](https://keepachangelog.com/1.1.0/) and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0]
+
+No changes of its own. Both backends, `packvium/packvium` 1.8.0 and the 1.8.0 C library,
+answer the same way: results carry `optimality.lower_bound` and the gap, an effort budget
+names the stop that cut the search, and a non-boolean `keep_upright`, `stackable`,
+`must_be_on_floor` or `require_placement_coordinates` is refused as `wrong_type`.
+
 ## [1.7.0]
 
 The Rust backend runs the 1.7.0 core, through `packvium/packvium` 1.7.0: `quality` looks ahead
