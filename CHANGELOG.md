@@ -4,6 +4,12 @@ What changed in `packvium/native-bridge` on Packagist, release by release. The f
 [Keep a Changelog](https://keepachangelog.com/1.1.0/) and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.0]
+
+No changes of its own. Both backends, `packvium/packvium` 1.9.0 and the 1.9.0 C library, now
+check the centre of gravity under a support ratio, refuse a length past `2^53 - 1` ticks or an
+empty side with a pointer, and agree on nesting under a clearance.
+
 ## [1.8.0]
 
 No changes of its own. Both backends, `packvium/packvium` 1.8.0 and the 1.8.0 C library,
