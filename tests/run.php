@@ -95,7 +95,8 @@ if (!extension_loaded('ffi')) {
         ],
         'unsupported feature' => [
             'items' => [['id' => 'cube', 'quantity' => 1, 'dimensions' => $side]],
-            'containers' => [['id' => 'box', 'inner_dimensions' => $side, 'pallet_overhang_limit' => '1']],
+            'containers' => [['id' => 'box', 'inner_dimensions' => $side,
+                'pallet_overhang_limit' => ['length' => '1', 'width' => '1'], 'axles' => []]],
         ],
         'policy without as_of' => [
             'items' => [['id' => 'cube', 'quantity' => 1, 'dimensions' => $side]],
