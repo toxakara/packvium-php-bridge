@@ -16,7 +16,7 @@ body:
     id: package-version
     attributes:
       label: Package and version
-      placeholder: "packvium/native-bridge 1.9.0 (PHP)"
+      placeholder: "packvium/native-bridge 1.10.0 (PHP)"
     validations:
       required: false
   - type: textarea
